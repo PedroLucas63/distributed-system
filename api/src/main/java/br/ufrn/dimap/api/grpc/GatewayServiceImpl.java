@@ -36,8 +36,6 @@ public class GatewayServiceImpl extends GatewayServiceImplBase {
             );
         }
 
-
-
         responseObserver.onCompleted();
     }
 

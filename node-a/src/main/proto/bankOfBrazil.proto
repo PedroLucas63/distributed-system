@@ -1,0 +1,39 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+package node_a;
+option java_package = "br.ufrn.dimap.grpc";
+option java_multiple_files = true;
+
+service BankOfBrazilService {
+  rpc CreateAccount(CreateAccountRequest) returns (AccountResponseWithSuccess);
+  rpc Withdraw(TransactionRequest) returns (AccountResponseWithSuccess);
+  rpc Deposit(TransactionRequest) returns (AccountResponseWithSuccess);
+  rpc GetAccount(BalanceRequest) returns (AccountResponseWithSuccess);
+  rpc GetAllAccounts(google.protobuf.Empty) returns (stream AccountResponse);
+}
+
+message CreateAccountRequest {
+  string Name = 1;
+  int64 AccountNumber = 2;
+}
+
+message AccountResponse {
+  string Name = 1;
+  int64 AccountNumber = 2;
+  double Balance = 3;
+}
+
+message BalanceRequest {
+  int64 AccountNumber = 1;
+}
+
+message TransactionRequest {
+  int64 AccountNumber = 2;
+  double Amount = 3;
+}
+
+message AccountResponseWithSuccess {
+  AccountResponse Account = 1;
+  bool Success = 2;
+}

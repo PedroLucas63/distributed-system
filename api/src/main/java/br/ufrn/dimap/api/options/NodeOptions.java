@@ -49,7 +49,7 @@ public class NodeOptions extends ServerOptions {
         return gatewayGrpcPort;
     }
 
-    public static class Builder extends ServerOptions.Builder {
+    public static class Builder extends ServerOptions.Builder<Builder> {
         private long nodeId;
         private String prefix;
         private InetAddress gatewayAddress;
@@ -57,13 +57,18 @@ public class NodeOptions extends ServerOptions {
         private int gatewayHttpPort;
         private int gatewayGrpcPort;
 
+        @Override
+        protected Builder self() {
+            return this;
+        }
+
         public Builder nodeId(long nodeId) {
             this.nodeId = nodeId;
             return this;
         }
 
-        public Builder pathPrefix(String pathPrefix) {
-            this.prefix = pathPrefix;
+        public Builder prefix(String prefix) {
+            this.prefix = prefix;
             return this;
         }
 

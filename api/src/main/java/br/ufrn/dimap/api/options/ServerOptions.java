@@ -1,12 +1,12 @@
 package br.ufrn.dimap.api.options;
 
-public class ServerOptions {
+public abstract class ServerOptions {
     protected final String password;
     protected final int udpPort;
     protected final int httpPort;
     protected final int grpcPort;
 
-    protected ServerOptions(Builder builder) {
+    protected ServerOptions(Builder<?> builder) {
         this.password = builder.password;
         this.udpPort = builder.udpPort;
         this.httpPort = builder.httpPort;
@@ -29,38 +29,34 @@ public class ServerOptions {
         return grpcPort;
     }
 
-    public static class Builder {
+    public abstract static class Builder<T extends Builder<T>> {
         protected String password;
         protected int udpPort;
         protected int httpPort;
         protected int grpcPort;
 
-        public Builder password(String password) {
+        protected abstract T self();
+
+        public T password(String password) {
             this.password = password;
-            return this;
+            return self();
         }
 
-        public Builder udpPort(int udpPort) {
+        public T udpPort(int udpPort) {
             this.udpPort = udpPort;
-            return this;
+            return self();
         }
 
-        public Builder httpPort(int httpPort) {
+        public T httpPort(int httpPort) {
             this.httpPort = httpPort;
-            return this;
+            return self();
         }
 
-        public Builder grpcPort(int grpcPort) {
+        public T grpcPort(int grpcPort) {
             this.grpcPort = grpcPort;
-            return this;
+            return self();
         }
 
-        public ServerOptions build() {
-            if (password == null || password.isEmpty()) {
-                throw new IllegalStateException("Password was not set.");
-            }
-
-            return new ServerOptions(this);
-        }
+        public abstract ServerOptions build();
     }
 }

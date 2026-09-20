@@ -6,6 +6,9 @@ import br.ufrn.dimap.http.sockets.HttpConnection;
 import br.ufrn.dimap.http.types.HttpRequest;
 import br.ufrn.dimap.http.types.HttpResponse;
 import br.ufrn.dimap.api.types.NodeInfo;
+import io.grpc.Channel;
+import io.grpc.ManagedChannelBuilder;
+import io.grpc.Status;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,10 +19,17 @@ public class NodeConnection {
 
     private long nodeId;
     private final NodeInfo nodeInfo;
+    private final Channel channel;
 
     public NodeConnection(long nodeId, NodeInfo nodeInfo) {
         this.nodeId = nodeId;
         this.nodeInfo = nodeInfo;
+
+        var targetAddress = nodeInfo.address() + ":" + nodeInfo.grpcPort();
+        this.channel = ManagedChannelBuilder
+            .forTarget(targetAddress)
+            .usePlaintext()
+            .build();
     }
 
     public HttpResponse sendHttp(HttpRequest request) throws IOException {
@@ -61,6 +71,10 @@ public class NodeConnection {
                 return HttpParser.parseResponse(input);
             }
         }
+    }
+
+    public Channel getGrpcChannel() {
+        return channel;
     }
 
     public long getNodeId() {
