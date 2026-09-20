@@ -27,8 +27,6 @@ public class NodeConnection {
 
         var targetAddress = nodeInfo.address() + ":" + nodeInfo.grpcPort();
 
-        System.out.println("[gRPC] Node target: " + targetAddress);
-
         this.channel = ManagedChannelBuilder
             .forTarget(targetAddress)
             .usePlaintext()
@@ -37,6 +35,17 @@ public class NodeConnection {
 
     public HttpResponse sendHttp(HttpRequest request) throws IOException {
         try (var node = new HttpConnection(nodeInfo.address(), nodeInfo.httpPort())) {
+            node.write(request);
+            return node.readResponse();
+        }
+    }
+
+    public HttpResponse sendConfigHttp(HttpRequest request) throws IOException {
+        if (nodeInfo.configPort() == null) {
+            throw new IllegalStateException("Port not configured");
+        }
+
+        try (var node = new HttpConnection(nodeInfo.address(), nodeInfo.configPort())) {
             node.write(request);
             return node.readResponse();
         }

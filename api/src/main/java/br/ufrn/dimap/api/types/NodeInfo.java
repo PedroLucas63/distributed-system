@@ -5,6 +5,7 @@ public record NodeInfo(
     String prefix,
     int udpPort,
     int httpPort,
-    int grpcPort
+    int grpcPort,
+    Integer configPort
 ) {
 }

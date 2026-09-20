@@ -22,8 +22,6 @@ public class NodeManager {
     }
 
     public long registerNode(NodeInfo info) {
-        System.out.println("Registrando nó com prefixo " + info.prefix());
-
         nodesLock.lock();
 
         try {
@@ -39,11 +37,56 @@ public class NodeManager {
         }
     }
 
-    public NodeConnection getNextLiveNode(String prefix)
+    public NodeConnection getByPrefix(String prefix)
     {
         nodesLock.lock();
 
-        System.out.println("Pegando nó com prefixo " + prefix);
+        try {
+            for (var connection : knownNodes.values()) {
+                if (connection.getNodeInfo().prefix().equals(prefix)) {
+                    return connection;
+                }
+            }
+
+            return null;
+        } finally {
+            nodesLock.unlock();
+        }
+    }
+
+    public NodeConnection getLiveByPrefix(String prefix)
+    {
+        nodesLock.lock();
+
+        try {
+            var availableNodes = liveNodes.get(prefix);
+
+            if (availableNodes == null)
+                return null;
+
+            while (!availableNodes.isEmpty()) {
+                var nodeIds = new ArrayList<>(availableNodes.keySet());
+                var firstId = nodeIds.getFirst();
+
+                var heartbeat = availableNodes.get(firstId);
+                var nodeTime = System.nanoTime() - heartbeat;
+
+                if (nodeTime > heartbeatTimeoutNanos) {
+                    availableNodes.remove(firstId);
+                } else {
+                    return knownNodes.get(firstId);
+                }
+            }
+
+            return null;
+        } finally {
+            nodesLock.unlock();
+        }
+    }
+
+    public NodeConnection getNextLiveNode(String prefix)
+    {
+        nodesLock.lock();
 
         try {
             var availableNodes = liveNodes.get(prefix);
@@ -95,8 +138,6 @@ public class NodeManager {
 
     public void registerHeartbeat(long nodeId)
     {
-        System.out.println("Registrando heartbeat do nó " + nodeId);
-
         nodesLock.lock();
         try {
             var connection = knownNodes.get(nodeId);
@@ -111,8 +152,6 @@ public class NodeManager {
 
     public void registerConnectionRefused(long nodeId) {
         nodesLock.lock();
-
-        System.out.println("Registrando conexão recusada do nó " + nodeId);
 
         try {
             var connection = knownNodes.get(nodeId);

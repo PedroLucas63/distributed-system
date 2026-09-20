@@ -10,6 +10,7 @@ public class NodeOptions extends ServerOptions {
     private final int gatewayUdpPort;
     private final int gatewayHttpPort;
     private final int gatewayGrpcPort;
+    private final Integer configPort;
 
     private NodeOptions(Builder builder) {
         super(builder);
@@ -19,6 +20,7 @@ public class NodeOptions extends ServerOptions {
         this.gatewayUdpPort = builder.gatewayUdpPort;
         this.gatewayHttpPort = builder.gatewayHttpPort;
         this.gatewayGrpcPort = builder.gatewayGrpcPort;
+        this.configPort = builder.configPort;
     }
 
     public long getNodeId() {
@@ -49,6 +51,10 @@ public class NodeOptions extends ServerOptions {
         return gatewayGrpcPort;
     }
 
+    public Integer getConfigPort() {
+        return configPort;
+    }
+
     public static class Builder extends ServerOptions.Builder<Builder> {
         private long nodeId;
         private String prefix;
@@ -56,6 +62,7 @@ public class NodeOptions extends ServerOptions {
         private int gatewayUdpPort;
         private int gatewayHttpPort;
         private int gatewayGrpcPort;
+        private Integer configPort = null;
 
         @Override
         protected Builder self() {
@@ -94,6 +101,11 @@ public class NodeOptions extends ServerOptions {
 
         public Builder gatewayGrpcPort(int gatewayGrpcPort) {
             this.gatewayGrpcPort = gatewayGrpcPort;
+            return this;
+        }
+
+        public Builder configPort(Integer configPort) {
+            this.configPort = configPort;
             return this;
         }
 

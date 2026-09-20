@@ -6,7 +6,6 @@ import br.ufrn.dimap.api.options.GatewayOptions;
 import br.ufrn.dimap.api.types.NodeInfo;
 import io.grpc.stub.StreamObserver;
 
-
 public class GatewayServiceImpl extends GatewayServiceImplBase {
     private final GatewayOptions options;
     private final NodeManager  nodeManager;
@@ -50,12 +49,18 @@ public class GatewayServiceImpl extends GatewayServiceImplBase {
             );
         } else {
             var requestInfo = request.getInfo();
+            Integer configPort = null;
+            if (requestInfo.hasConfigPort()) {
+                configPort = requestInfo.getConfigPort();
+            }
+
             var info = new NodeInfo(
                 requestInfo.getAddress(),
                 requestInfo.getPrefix(),
                 requestInfo.getUdpPort(),
                 requestInfo.getHttpPort(),
-                requestInfo.getGrpcPort()
+                requestInfo.getGrpcPort(),
+                configPort
             );
 
             var nodeId = nodeManager.registerNode(info);

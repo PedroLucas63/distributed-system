@@ -1,13 +1,12 @@
 package br.ufrn.dimap.api.handlers;
 
 import br.ufrn.dimap.api.managers.NodeManager;
+import br.ufrn.dimap.api.nodes.NodeConnection;
 import br.ufrn.dimap.api.options.GatewayOptions;
 import br.ufrn.dimap.api.routing.INodeRouter;
-import br.ufrn.dimap.api.types.HeartbeatMessage;
-import br.ufrn.dimap.api.types.LiveNodesRequest;
-import br.ufrn.dimap.api.types.SubscribeRequest;
-import br.ufrn.dimap.api.types.SubscribeResponse;
+import br.ufrn.dimap.api.types.*;
 import br.ufrn.dimap.http.factories.HttpResponseFactory;
+import br.ufrn.dimap.http.sockets.HttpConnection;
 import br.ufrn.dimap.http.types.HttpMethod;
 import br.ufrn.dimap.http.types.HttpRequest;
 import br.ufrn.dimap.http.types.HttpResponse;
@@ -58,6 +57,9 @@ public class GatewayRequestHandler implements IRequestHandler {
                 }
                 case "/live-nodes" -> {
                     return processLiveNodes(request);
+                }
+                case "/command" -> {
+                    return processNodeCommand(request);
                 }
             }
 
@@ -121,6 +123,40 @@ public class GatewayRequestHandler implements IRequestHandler {
 
             var infos = nodeManager.getLiveNodesBySamePrefix(liveNodesRequest.nodeId());
             return responseFactory.ok(infos);
+        } catch (Exception e) {
+            return responseFactory.badRequest("Bad request");
+        }
+    }
+
+    private HttpResponse processNodeCommand(HttpRequest request) {
+        try {
+            var nodeCommandRequest = MAPPER.readValue(request.body(), NodeCommandRequest.class);
+
+            if (nodeCommandRequest == null) {
+                return responseFactory.badRequest("Bad request");
+            }
+
+            if (!nodeCommandRequest.password().equals(gatewayOptions.getPassword())) {
+                return responseFactory.unauthorized("Wrong password");
+            }
+
+            NodeConnection connection;
+
+            if (nodeCommandRequest.command().equalsIgnoreCase("STOP")) {
+                connection = nodeManager.getLiveByPrefix(nodeCommandRequest.nodePrefix());
+            } else {
+                connection = nodeManager.getByPrefix(nodeCommandRequest.nodePrefix());
+            }
+
+            if (connection == null) {
+                return responseFactory.badRequest("Bad request");
+            }
+
+            try {
+                return connection.sendConfigHttp(request);
+            } catch (Exception e) {
+                return responseFactory.badRequest(e.getMessage());
+            }
         } catch (Exception e) {
             return responseFactory.badRequest("Bad request");
         }

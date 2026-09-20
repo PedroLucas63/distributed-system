@@ -1,6 +1,7 @@
 package br.ufrn.dimap;
 
 import br.ufrn.dimap.api.Node;
+import br.ufrn.dimap.api.managers.LifecycleManager;
 import br.ufrn.dimap.api.nodes.NodeHeartbeat;
 import br.ufrn.dimap.api.nodes.NodeRegister;
 import br.ufrn.dimap.api.options.NodeOptions;
@@ -29,6 +30,22 @@ public class Main {
         try {
             var options = getNodeOptions();
 
+            if (options.getConfigPort() != null) {
+                var httpResponseOptions = getHttpResponseOptions();
+                var httpResponseFactory = new HttpResponseFactory(httpResponseOptions);
+
+                LifecycleManager lifecycleManager = new LifecycleManager(options, httpResponseFactory, Main::startNode);
+                lifecycleManager.start();
+            } else {
+                startNode(options);
+            }
+        } catch (IOException e) {
+            System.out.println("Error is started server");
+        }
+    }
+
+    static void startNode(NodeOptions options) {
+        try {
             var httpResponseOptions = getHttpResponseOptions();
             var httpResponseFactory = new HttpResponseFactory(httpResponseOptions);
 
@@ -69,16 +86,23 @@ public class Main {
             properties.load(input);
         }
 
+        var configPortStr = properties.getProperty("config.port");
+        Integer configPort = null;
+        if (configPortStr != null) {
+            configPort = Integer.parseInt(configPortStr);
+        }
+
         return new NodeOptions.Builder()
             .gatewayAddress(
                 InetAddress.getByName(properties.getProperty("gateway.address"))
             )
             .gatewayUdpPort(Integer.parseInt(properties.getProperty("gateway.udp.port")))
             .gatewayHttpPort(Integer.parseInt(properties.getProperty("gateway.http.port")))
-            .gatewayGrpcPort(Integer.parseInt(properties.getProperty("gateway.grpd.port")))
+            .gatewayGrpcPort(Integer.parseInt(properties.getProperty("gateway.grpc.port")))
             .httpPort(Integer.parseInt(properties.getProperty("http.port")))
             .udpPort(Integer.parseInt(properties.getProperty("udp.port")))
             .grpcPort(Integer.parseInt(properties.getProperty("grpc.port")))
+            .configPort(configPort)
             .prefix(properties.getProperty("prefix"))
             .password(properties.getProperty("password"))
             .build();

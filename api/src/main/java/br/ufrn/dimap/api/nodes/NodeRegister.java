@@ -69,7 +69,8 @@ public class NodeRegister {
                     options.getPrefix(),
                     options.getUdpPort(),
                     options.getHttpPort(),
-                    options.getGrpcPort()
+                    options.getGrpcPort(),
+                    options.getConfigPort()
             );
         }
     }

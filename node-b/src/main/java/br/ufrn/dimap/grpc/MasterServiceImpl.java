@@ -53,7 +53,6 @@ public class MasterServiceImpl extends MasterBankServiceImplBase {
         TransactionRequest request,
         StreamObserver<AccountResponseWithSuccess> responseObserver
     ) {
-        System.out.println("[gRPC] RECEBENDO REQUISIÇÂO DE DEPOSITO");
         try {
             var account = bank.deposit(
                 request.getAccountNumber(),

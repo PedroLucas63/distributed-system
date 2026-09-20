@@ -4,39 +4,40 @@ option java_package = "br.ufrn.dimap.api.grpc";
 option java_multiple_files = true;
 
 service GatewayService {
-  rpc Pulse(HeartbeatRequest) returns (HeartbeatResponse);
-  rpc Subscriber(SubscribeRequest) returns (SubscribeResponse);
-  rpc GetLiveNodes(LiveNodesRequest) returns (stream NodeInfoMessage);
+  rpc pulse(HeartbeatRequest) returns (HeartbeatResponse);
+  rpc subscriber(SubscribeRequest) returns (SubscribeResponse);
+  rpc getLiveNodes(LiveNodesRequest) returns (stream NodeInfoMessage);
 }
 
 message HeartbeatRequest {
-  int64 NodeId = 1;
-  string Password = 2;
+  int64 nodeId = 1;
+  string password = 2;
 }
 
 message HeartbeatResponse {
-  bool Success = 1;
+  bool success = 1;
 }
 
 message NodeInfoMessage {
-  string Address = 1;
-  int32 UdpPort = 2;
-  int32 HttpPort = 3;
-  int32 GrpcPort = 4;
-  string Prefix = 5;
+  string address = 1;
+  int32 udpPort = 2;
+  int32 httpPort = 3;
+  int32 grpcPort = 4;
+  optional int32 configPort = 5;
+  string prefix = 6;
 }
 
 message SubscribeRequest {
-  NodeInfoMessage Info = 1;
-  string Password = 2;
+  NodeInfoMessage info = 1;
+  string password = 2;
 }
 
 message SubscribeResponse{
-  bool Success = 1;
-  int64 NodeId = 2;
+  bool success = 1;
+  int64 nodeId = 2;
 }
 
 message LiveNodesRequest {
-  int64 NodeId = 1;
-  string Password = 2;
+  int64 nodeId = 1;
+  string password = 2;
 }
