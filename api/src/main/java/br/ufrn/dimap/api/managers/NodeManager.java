@@ -29,7 +29,7 @@ public class NodeManager {
             var connection = new NodeConnection(nodeId, info);
             knownNodes.put(nodeId, connection);
 
-            addLiveNode(info.pathPrefix(), nodeId);
+            addLiveNode(info.prefix(), nodeId);
 
             return nodeId;
         } finally {
@@ -75,7 +75,7 @@ public class NodeManager {
         if (connection == null)
             return List.of();
 
-        var prefix = connection.getNodeInfo().pathPrefix();
+        var prefix = connection.getNodeInfo().prefix();
 
         var dictionary = liveNodes.get(prefix);
         if (dictionary == null)
@@ -96,7 +96,7 @@ public class NodeManager {
             var connection = knownNodes.get(nodeId);
             if (connection == null) return;
 
-            var prefix = connection.getNodeInfo().pathPrefix();
+            var prefix = connection.getNodeInfo().prefix();
             addLiveNode(prefix, nodeId);
         } finally {
             nodesLock.unlock();
@@ -110,7 +110,7 @@ public class NodeManager {
             var connection = knownNodes.get(nodeId);
             if (connection == null) return;
 
-            var prefix = connection.getNodeInfo().pathPrefix();
+            var prefix = connection.getNodeInfo().prefix();
             var dictionary = liveNodes.get(prefix);
             if  (dictionary == null) return;
 

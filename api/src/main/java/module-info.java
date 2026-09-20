@@ -6,4 +6,5 @@ module api {
     requires com.google.protobuf;
     requires com.google.common;
     requires com.fasterxml.jackson.databind;
+    requires java.xml;
 }

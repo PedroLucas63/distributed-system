@@ -7,11 +7,17 @@ public class HttpListener implements AutoCloseable {
     private final ServerSocket server;
 
     public HttpListener(InetSocketAddress endPoint) throws IOException {
-        this.server = new ServerSocket(endPoint.getPort());
+        this.server = new ServerSocket();
+        this.server.bind(endPoint);
     }
 
     public HttpListener(int port) throws IOException {
         this.server = new ServerSocket(port);
+    }
+
+    public HttpListener(InetAddress address, int port) throws IOException {
+        var endPoint = new InetSocketAddress(address, port);
+        this(endPoint);
     }
 
     public HttpListener(ServerSocket socket) {
