@@ -22,6 +22,8 @@ public class NodeManager {
     }
 
     public long registerNode(NodeInfo info) {
+        System.out.println("Registrando nó com prefixo " + info.prefix());
+
         nodesLock.lock();
 
         try {
@@ -40,6 +42,8 @@ public class NodeManager {
     public NodeConnection getNextLiveNode(String prefix)
     {
         nodesLock.lock();
+
+        System.out.println("Pegando nó com prefixo " + prefix);
 
         try {
             var availableNodes = liveNodes.get(prefix);
@@ -91,6 +95,8 @@ public class NodeManager {
 
     public void registerHeartbeat(long nodeId)
     {
+        System.out.println("Registrando heartbeat do nó " + nodeId);
+
         nodesLock.lock();
         try {
             var connection = knownNodes.get(nodeId);
@@ -105,6 +111,8 @@ public class NodeManager {
 
     public void registerConnectionRefused(long nodeId) {
         nodesLock.lock();
+
+        System.out.println("Registrando conexão recusada do nó " + nodeId);
 
         try {
             var connection = knownNodes.get(nodeId);

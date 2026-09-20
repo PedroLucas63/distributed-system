@@ -79,7 +79,7 @@ public final class HttpResponseFactory extends HttpMessageFactory {
     }
 
     public HttpResponse badRequest(Object content) {
-        return create(HttpStatusCode.BadGateway, content, "");
+        return create(HttpStatusCode.BadRequest, content, "");
     }
 
     public HttpResponse unauthorized(Object content) {

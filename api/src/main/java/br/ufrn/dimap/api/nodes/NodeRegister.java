@@ -26,7 +26,7 @@ public class NodeRegister {
 
     public long register() throws IOException {
         try (var connection = new HttpConnection()) {
-            connection.connect(options.getGatewayAddress(), options.getHttpPort());
+            connection.connect(options.getGatewayAddress(), options.getGatewayHttpPort());
 
             var message = createSubscribeRequest();
             var request = requestFactory.post("/subscribe", message);

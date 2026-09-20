@@ -26,6 +26,9 @@ public class NodeConnection {
         this.nodeInfo = nodeInfo;
 
         var targetAddress = nodeInfo.address() + ":" + nodeInfo.grpcPort();
+
+        System.out.println("[gRPC] Node target: " + targetAddress);
+
         this.channel = ManagedChannelBuilder
             .forTarget(targetAddress)
             .usePlaintext()
@@ -43,7 +46,7 @@ public class NodeConnection {
         var buffer = HttpMessageSerializer.serialize(request);
 
         try (var client = new DatagramSocket()) {
-            var endPoint = new InetSocketAddress(nodeInfo.address(), nodeInfo.httpPort());
+            var endPoint = new InetSocketAddress(nodeInfo.address(), nodeInfo.udpPort());
             client.connect(endPoint);
 
             client.send(new DatagramPacket(buffer, buffer.length, endPoint));

@@ -75,7 +75,7 @@ public class Main {
             )
             .gatewayUdpPort(Integer.parseInt(properties.getProperty("gateway.udp.port")))
             .gatewayHttpPort(Integer.parseInt(properties.getProperty("gateway.http.port")))
-            .gatewayGrpcPort(Integer.parseInt(properties.getProperty("gateway.grpd.port")))
+            .gatewayGrpcPort(Integer.parseInt(properties.getProperty("gateway.grpc.port")))
             .httpPort(Integer.parseInt(properties.getProperty("http.port")))
             .udpPort(Integer.parseInt(properties.getProperty("udp.port")))
             .grpcPort(Integer.parseInt(properties.getProperty("grpc.port")))

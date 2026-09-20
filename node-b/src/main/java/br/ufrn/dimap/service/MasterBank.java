@@ -41,6 +41,7 @@ public class MasterBank extends Bank {
         }
 
         account.withdraw(amount);
+        amountAvailable = amountAvailable.subtract(amount);
         return account;
     }
 }

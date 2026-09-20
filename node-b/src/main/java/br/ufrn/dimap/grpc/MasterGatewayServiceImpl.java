@@ -79,7 +79,7 @@ public class MasterGatewayServiceImpl extends MasterBankServiceImplBase
                 .withDescription("No nodes available")
                 .asRuntimeException();
         }
-
+        System.out.println("[gRPC] Pegando canal do nó " + connection.getNodeId());
         return connection.getGrpcChannel();
     }
 }
