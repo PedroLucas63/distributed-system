@@ -1,13 +1,16 @@
 package br.ufrn.dimap;
 
+import br.ufrn.dimap.api.Gateway;
 import br.ufrn.dimap.api.grpc.GatewayServiceBinder;
 import br.ufrn.dimap.api.handlers.GatewayRequestHandler;
 import br.ufrn.dimap.api.managers.NodeManager;
 import br.ufrn.dimap.api.options.GatewayOptions;
+import br.ufrn.dimap.api.protocols.GrpcProtocol;
 import br.ufrn.dimap.api.protocols.HttpGatewayProtocol;
 import br.ufrn.dimap.api.protocols.UdpGatewayProtocol;
 import br.ufrn.dimap.api.routing.HttpNodeRouter;
 import br.ufrn.dimap.api.routing.UdpNodeRouter;
+import br.ufrn.dimap.grpc.BbGatewayServiceBinder;
 import br.ufrn.dimap.http.factories.HttpResponseFactory;
 import br.ufrn.dimap.http.options.HttpMessageOptions;
 import br.ufrn.dimap.http.types.HttpVersion;
@@ -16,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.List;
 import java.util.Properties;
 
 public class Main {
@@ -46,7 +50,14 @@ public class Main {
             );
 
             var grpcInternalBinder = new GatewayServiceBinder(options, nodeManager);
+            var grpcBbBinder = new BbGatewayServiceBinder("bb", nodeManager);
+            var grpcMasterBinder = new BbGatewayServiceBinder("master", nodeManager);
+            var grpcProtocol =  new GrpcProtocol(
+                options, List.of(grpcInternalBinder, grpcBbBinder, grpcMasterBinder)
+            );
 
+            var gateway = new Gateway(List.of(httpProtocol, udpProtocol, grpcProtocol));
+            gateway.start();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
