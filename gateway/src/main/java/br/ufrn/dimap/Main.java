@@ -10,8 +10,8 @@ import br.ufrn.dimap.api.protocols.HttpGatewayProtocol;
 import br.ufrn.dimap.api.protocols.UdpGatewayProtocol;
 import br.ufrn.dimap.api.routing.HttpNodeRouter;
 import br.ufrn.dimap.api.routing.UdpNodeRouter;
-import br.ufrn.dimap.grpc.BbGatewayServiceBinder;
-import br.ufrn.dimap.grpc.MasterGatewayServiceBinder;
+import br.ufrn.dimap.grpc.CalcGatewayServiceBinder;
+import br.ufrn.dimap.grpc.FinanceGatewayServiceBinder;
 import br.ufrn.dimap.http.factories.HttpResponseFactory;
 import br.ufrn.dimap.http.options.HttpMessageOptions;
 import br.ufrn.dimap.http.types.HttpVersion;
@@ -51,8 +51,8 @@ public class Main {
             );
 
             var grpcInternalBinder = new GatewayServiceBinder(options, nodeManager);
-            var grpcBbBinder = new BbGatewayServiceBinder("bb", nodeManager);
-            var grpcMasterBinder = new MasterGatewayServiceBinder("master", nodeManager);
+            var grpcBbBinder = new CalcGatewayServiceBinder("calc", nodeManager);
+            var grpcMasterBinder = new FinanceGatewayServiceBinder("finance", nodeManager);
             var grpcProtocol =  new GrpcProtocol(
                 options, List.of(grpcInternalBinder, grpcBbBinder, grpcMasterBinder)
             );

@@ -1,0 +1,22 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+package node_a;
+option java_package = "br.ufrn.dimap.grpc";
+option java_multiple_files = true;
+
+service CalcService {
+  rpc add(OperationRequest) returns (OperationResponse);
+  rpc sub(OperationRequest) returns (OperationResponse);
+  rpc mult(OperationRequest) returns (OperationResponse);
+  rpc div(OperationRequest) returns (OperationResponse);
+}
+
+message OperationRequest {
+  double first = 1;
+  double second = 2;
+}
+
+message OperationResponse {
+  double result = 1;
+}

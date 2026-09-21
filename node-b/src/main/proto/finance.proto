@@ -1,0 +1,42 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+package node_a;
+option java_package = "br.ufrn.dimap.grpc";
+option java_multiple_files = true;
+
+service FinanceService {
+  rpc simpleInterest(InterestRequest) returns (ValueResponse);
+  rpc compoundInterest(InterestRequest) returns (ValueResponse);
+  rpc discount(DiscountRequest) returns (ValueResponse);
+  rpc installments(InstallmentsRequest) returns (stream InstallmentResponse);
+}
+
+message DiscountRequest {
+  double value = 1;
+  double percentage = 2;
+}
+
+message InterestRequest {
+  double principal = 1;
+  double rate = 2;
+  int32 periods = 3;
+}
+
+message InstallmentsRequest {
+  double principal = 1;
+  double rate = 2;
+  int32 numberOfInstallments = 3;
+}
+
+message ValueResponse {
+  double result = 1;
+}
+
+message InstallmentResponse {
+  int32 number = 1;
+  double interest = 2;
+  double amortization = 3;
+  double payment = 4;
+  double remainingBalance = 5;
+}

@@ -12,7 +12,6 @@
     <modules>
         <module>http</module>
         <module>api</module>
-        <module>application</module>
         <module>gateway</module>
         <module>node-a</module>
         <module>node-b</module>

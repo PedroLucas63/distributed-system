@@ -1,4 +1,4 @@
-module node.a {
+module node.b {
     requires io.grpc;
     requires io.grpc.stub;
     requires io.grpc.protobuf;

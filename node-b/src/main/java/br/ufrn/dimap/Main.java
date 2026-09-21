@@ -8,13 +8,12 @@ import br.ufrn.dimap.api.options.NodeOptions;
 import br.ufrn.dimap.api.protocols.GrpcProtocol;
 import br.ufrn.dimap.api.protocols.HttpNodeProtocol;
 import br.ufrn.dimap.api.protocols.UdpNodeProtocol;
-import br.ufrn.dimap.grpc.MasterServiceBinder;
-import br.ufrn.dimap.handlers.MasterBankRequestHandler;
+import br.ufrn.dimap.grpc.FinanceServiceBinder;
+import br.ufrn.dimap.handlers.FinanceRequestHandler;
 import br.ufrn.dimap.http.factories.HttpRequestFactory;
 import br.ufrn.dimap.http.factories.HttpResponseFactory;
 import br.ufrn.dimap.http.options.HttpMessageOptions;
 import br.ufrn.dimap.http.types.HttpVersion;
-import br.ufrn.dimap.service.MasterBank;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -49,8 +48,7 @@ public class Main {
             var httpResponseOptions = getHttpResponseOptions();
             var httpResponseFactory = new HttpResponseFactory(httpResponseOptions);
 
-            var bank = new MasterBank();
-            var requestHandler = new MasterBankRequestHandler(bank, options, httpResponseFactory);
+            var requestHandler = new FinanceRequestHandler(options, httpResponseFactory);
 
             var httpRequestOptions = getHttpRequestOptions();
             var httpRequestFactory = new HttpRequestFactory(httpRequestOptions);
@@ -65,7 +63,7 @@ public class Main {
             var httpProtocol = new HttpNodeProtocol(options, requestHandler);
             var udpProtocol = new UdpNodeProtocol(options, requestHandler);
 
-            var grpcBinder = new MasterServiceBinder(bank);
+            var grpcBinder = new FinanceServiceBinder();
             var grpcProtocol = new GrpcProtocol(options, List.of(grpcBinder));
 
             var node = new Node(

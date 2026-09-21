@@ -8,9 +8,8 @@ import br.ufrn.dimap.api.options.NodeOptions;
 import br.ufrn.dimap.api.protocols.GrpcProtocol;
 import br.ufrn.dimap.api.protocols.HttpNodeProtocol;
 import br.ufrn.dimap.api.protocols.UdpNodeProtocol;
-import br.ufrn.dimap.application.service.Bank;
-import br.ufrn.dimap.grpc.BbServiceBinder;
-import br.ufrn.dimap.handlers.BbRequestHandler;
+import br.ufrn.dimap.grpc.CalcServiceBinder;
+import br.ufrn.dimap.handlers.CalcRequestHandler;
 import br.ufrn.dimap.http.factories.HttpRequestFactory;
 import br.ufrn.dimap.http.factories.HttpResponseFactory;
 import br.ufrn.dimap.http.options.HttpMessageOptions;
@@ -49,8 +48,7 @@ public class Main {
             var httpResponseOptions = getHttpResponseOptions();
             var httpResponseFactory = new HttpResponseFactory(httpResponseOptions);
 
-            var bank = new Bank();
-            var requestHandler = new BbRequestHandler(bank, options, httpResponseFactory);
+            var requestHandler = new CalcRequestHandler(options, httpResponseFactory);
 
             var httpRequestOptions = getHttpRequestOptions();
             var httpRequestFactory = new HttpRequestFactory(httpRequestOptions);
@@ -65,7 +63,7 @@ public class Main {
             var httpProtocol = new HttpNodeProtocol(options, requestHandler);
             var udpProtocol = new UdpNodeProtocol(options, requestHandler);
 
-            var grpcBinder = new BbServiceBinder(bank);
+            var grpcBinder = new CalcServiceBinder();
             var grpcProtocol = new GrpcProtocol(options, List.of(grpcBinder));
 
             var node = new Node(
