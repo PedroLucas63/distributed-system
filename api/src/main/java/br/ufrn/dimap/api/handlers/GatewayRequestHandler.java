@@ -140,13 +140,7 @@ public class GatewayRequestHandler implements IRequestHandler {
                 return responseFactory.unauthorized("Wrong password");
             }
 
-            NodeConnection connection;
-
-            if (nodeCommandRequest.command().equalsIgnoreCase("STOP")) {
-                connection = nodeManager.getLiveByPrefix(nodeCommandRequest.nodePrefix());
-            } else {
-                connection = nodeManager.getByPrefix(nodeCommandRequest.nodePrefix());
-            }
+            var connection = nodeManager.getByNodeId(nodeCommandRequest.nodeId());
 
             if (connection == null) {
                 return responseFactory.badRequest("Bad request");

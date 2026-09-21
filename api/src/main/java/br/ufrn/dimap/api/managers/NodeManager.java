@@ -25,7 +25,34 @@ public class NodeManager {
         nodesLock.lock();
 
         try {
-            var nodeId = currentNode++;
+            long nodeId;
+
+            if (info.id() == null) {
+                nodeId = currentNode++;
+            } else {
+                nodeId = info.id();
+
+                if (nodeId > currentNode) {
+                    currentNode = nodeId + 1;
+                }
+            }
+
+            if (knownNodes.containsKey(nodeId)) {
+                var currentNode = knownNodes.get(nodeId);
+                var prefix =  currentNode.getNodeInfo().prefix();
+
+                var dictionary = liveNodes.getOrDefault(prefix, new HashMap<>());
+
+                if (dictionary.containsKey(nodeId)) {
+                    var heartbeat = dictionary.get(nodeId);
+                    var nodeTime = System.nanoTime() - heartbeat;
+
+                    if (nodeTime <= heartbeatTimeoutNanos) {
+                        throw new IllegalArgumentException("Node already exists");
+                    }
+                }
+            }
+
             var connection = new NodeConnection(nodeId, info);
             knownNodes.put(nodeId, connection);
 
@@ -37,45 +64,13 @@ public class NodeManager {
         }
     }
 
-    public NodeConnection getByPrefix(String prefix)
+    public NodeConnection getByNodeId(long nodeId)
     {
         nodesLock.lock();
 
         try {
-            for (var connection : knownNodes.values()) {
-                if (connection.getNodeInfo().prefix().equals(prefix)) {
-                    return connection;
-                }
-            }
-
-            return null;
-        } finally {
-            nodesLock.unlock();
-        }
-    }
-
-    public NodeConnection getLiveByPrefix(String prefix)
-    {
-        nodesLock.lock();
-
-        try {
-            var availableNodes = liveNodes.get(prefix);
-
-            if (availableNodes == null)
-                return null;
-
-            while (!availableNodes.isEmpty()) {
-                var nodeIds = new ArrayList<>(availableNodes.keySet());
-                var firstId = nodeIds.getFirst();
-
-                var heartbeat = availableNodes.get(firstId);
-                var nodeTime = System.nanoTime() - heartbeat;
-
-                if (nodeTime > heartbeatTimeoutNanos) {
-                    availableNodes.remove(firstId);
-                } else {
-                    return knownNodes.get(firstId);
-                }
+            if (knownNodes.containsKey(nodeId)) {
+                return knownNodes.get(nodeId);
             }
 
             return null;

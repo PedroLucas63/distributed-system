@@ -3,7 +3,7 @@ package br.ufrn.dimap.api.options;
 import java.net.InetAddress;
 
 public class NodeOptions extends ServerOptions {
-    private long nodeId;
+    private Long nodeId;
     private final String prefix;
 
     private final InetAddress gatewayAddress;
@@ -23,7 +23,7 @@ public class NodeOptions extends ServerOptions {
         this.configPort = builder.configPort;
     }
 
-    public long getNodeId() {
+    public Long getNodeId() {
         return nodeId;
     }
 
@@ -56,7 +56,7 @@ public class NodeOptions extends ServerOptions {
     }
 
     public static class Builder extends ServerOptions.Builder<Builder> {
-        private long nodeId;
+        private Long nodeId;
         private String prefix;
         private InetAddress gatewayAddress;
         private int gatewayUdpPort;
@@ -69,7 +69,7 @@ public class NodeOptions extends ServerOptions {
             return this;
         }
 
-        public Builder nodeId(long nodeId) {
+        public Builder nodeId(Long nodeId) {
             this.nodeId = nodeId;
             return this;
         }

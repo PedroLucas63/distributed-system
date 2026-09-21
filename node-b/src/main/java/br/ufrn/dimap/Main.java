@@ -92,7 +92,14 @@ public class Main {
             configPort = Integer.parseInt(configPortStr);
         }
 
+        var nodeIdStr = properties.getProperty("node.id");
+        Long nodeId = null;
+        if (nodeIdStr != null) {
+            nodeId = Long.parseLong(nodeIdStr);
+        }
+
         return new NodeOptions.Builder()
+            .nodeId(nodeId)
             .gatewayAddress(
                 InetAddress.getByName(properties.getProperty("gateway.address"))
             )

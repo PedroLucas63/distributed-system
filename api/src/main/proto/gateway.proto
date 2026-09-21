@@ -19,12 +19,13 @@ message HeartbeatResponse {
 }
 
 message NodeInfoMessage {
-  string address = 1;
-  int32 udpPort = 2;
-  int32 httpPort = 3;
-  int32 grpcPort = 4;
-  optional int32 configPort = 5;
-  string prefix = 6;
+  optional int64 id = 1;
+  string address = 2;
+  int32 udpPort = 3;
+  int32 httpPort = 4;
+  int32 grpcPort = 5;
+  optional int32 configPort = 6;
+  string prefix = 7;
 }
 
 message SubscribeRequest {

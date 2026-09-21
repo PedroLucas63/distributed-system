@@ -2,7 +2,7 @@ package br.ufrn.dimap.api.types;
 
 public record NodeCommandRequest(
     String password,
-    String nodePrefix,
+    long nodeId,
     String command
 ) {
 }

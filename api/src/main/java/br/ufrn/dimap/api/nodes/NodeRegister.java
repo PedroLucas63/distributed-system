@@ -65,6 +65,7 @@ public class NodeRegister {
                     .orElseThrow();
 
             return new NodeInfo(
+                    options.getNodeId(),
                     address.getHostAddress(),
                     options.getPrefix(),
                     options.getUdpPort(),

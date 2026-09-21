@@ -89,8 +89,8 @@ public class LifecycleManager {
                 return responseFactory.unauthorized("Wrong password");
             }
 
-            if (!options.getPrefix().equals(command.nodePrefix())) {
-                return responseFactory.badRequest("Wrong node prefix");
+            if (options.getNodeId() != command.nodeId()) {
+                return responseFactory.badRequest("Wrong node id");
             }
 
             switch (command.command().toUpperCase()) {

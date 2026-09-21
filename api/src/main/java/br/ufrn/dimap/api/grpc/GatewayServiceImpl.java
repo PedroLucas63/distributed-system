@@ -54,7 +54,13 @@ public class GatewayServiceImpl extends GatewayServiceImplBase {
                 configPort = requestInfo.getConfigPort();
             }
 
+            Long nodeId = null;
+            if (requestInfo.hasId()) {
+                nodeId = requestInfo.getId();
+            }
+
             var info = new NodeInfo(
+                nodeId,
                 requestInfo.getAddress(),
                 requestInfo.getPrefix(),
                 requestInfo.getUdpPort(),
@@ -63,7 +69,7 @@ public class GatewayServiceImpl extends GatewayServiceImplBase {
                 configPort
             );
 
-            var nodeId = nodeManager.registerNode(info);
+            nodeId = nodeManager.registerNode(info);
 
             responseObserver.onNext(
                 SubscribeResponse
@@ -84,6 +90,7 @@ public class GatewayServiceImpl extends GatewayServiceImplBase {
             for (var node : nodes) {
                 var message = NodeInfoMessage
                     .newBuilder()
+                        .setId(node.id())
                         .setAddress(node.address())
                         .setPrefix(node.prefix())
                         .setUdpPort(node.udpPort())
