@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class Main {
-    static void main() {
+    public static void main(String[] args) {
         try {
             System.out.println("Iniciando gateway...");
 

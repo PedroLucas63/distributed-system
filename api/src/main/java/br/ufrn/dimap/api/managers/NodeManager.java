@@ -170,7 +170,7 @@ public class NodeManager {
     {
         var dictionary = liveNodes.computeIfAbsent(
           prefix,
-          _ -> {
+          key -> {
               cyclicNodeIds.put(prefix, 0L);
               return new HashMap<>();
           }

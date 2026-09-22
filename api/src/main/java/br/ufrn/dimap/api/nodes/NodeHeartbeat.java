@@ -33,7 +33,7 @@ public class NodeHeartbeat {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
-            } catch (IOException _) {
+            } catch (IOException e) {
 
             }
         }

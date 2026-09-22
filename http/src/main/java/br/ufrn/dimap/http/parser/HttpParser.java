@@ -287,7 +287,7 @@ public class HttpParser {
             var length = Integer.parseInt(value);
             if (length >= 0)
                 return length;
-        } catch (NumberFormatException _) {
+        } catch (NumberFormatException e) {
         }
 
         throw new HttpException("Invalid content length: content length is less than 0 or not is an integer");

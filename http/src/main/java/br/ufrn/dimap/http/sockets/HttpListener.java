@@ -16,8 +16,7 @@ public class HttpListener implements AutoCloseable {
     }
 
     public HttpListener(InetAddress address, int port) throws IOException {
-        var endPoint = new InetSocketAddress(address, port);
-        this(endPoint);
+        this(new InetSocketAddress(address, port));
     }
 
     public HttpListener(ServerSocket socket) {
