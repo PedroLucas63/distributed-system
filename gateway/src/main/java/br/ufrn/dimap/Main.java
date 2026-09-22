@@ -26,8 +26,29 @@ import java.util.Properties;
 public class Main {
     static void main() {
         try {
+            System.out.println("Iniciando gateway...");
+
             var options = getGatewayOptions();
             var httpMessageOptions = getHttpMessageOptions();
+
+            System.out.println("\nConfigurações do sistema:");
+            System.out.println(" - HTTP Port: " + options.getHttpPort());
+            System.out.println(" - UDP Port: " + options.getUdpPort());
+            System.out.println(" - gRPC Port: " + options.getGrpcPort());
+            System.out.println(" - Password: " + options.getPassword());
+
+            System.out.println("\nConfigurações das mensagens:");
+            System.out.println(" - HTTP Version: " + httpMessageOptions.getVersion());
+            System.out.println(" - Include Date: " + httpMessageOptions.isIncludeDateHeader());
+            System.out.println(" - Include Server: " + httpMessageOptions.isIncludeServerHeader());
+            System.out.println(" - Server: " + httpMessageOptions.getServer());
+            System.out.println(" - Default headers: ");
+            for (var header : httpMessageOptions.getDefaultHeaders().entrySet()) {
+                var  key = header.getKey();
+                var value = header.getValue();
+
+                System.out.println("  - " + key + ": " + value);
+            }
 
             var httpResponseFactory = new HttpResponseFactory(httpMessageOptions);
 
@@ -58,6 +79,9 @@ public class Main {
             );
 
             var gateway = new Gateway(List.of(httpProtocol, udpProtocol, grpcProtocol));
+
+            System.out.println("Funcionando...");
+
             gateway.start();
         } catch (IOException e) {
             System.out.println(e.getMessage());

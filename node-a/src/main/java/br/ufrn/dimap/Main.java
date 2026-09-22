@@ -45,13 +45,54 @@ public class Main {
 
     static void startNode(NodeOptions options) {
         try {
+            System.out.println("Iniciando nó A...");
+
             var httpResponseOptions = getHttpResponseOptions();
             var httpResponseFactory = new HttpResponseFactory(httpResponseOptions);
+
+            System.out.println("\nConfigurações do sistema:");
+            System.out.println(" - Node Id: " + options.getNodeId());
+            System.out.println(" - Gateway Address: " + options.getGatewayAddress());
+            System.out.println(" - Gateway HTTP Port: " + options.getGatewayHttpPort());
+            System.out.println(" - Gateway UDP Port: " + options.getGatewayUdpPort());
+            System.out.println(" - Gateway gRPC Port: " + options.getGatewayGrpcPort());
+            System.out.println(" - HTTP Port: " + options.getHttpPort());
+            System.out.println(" - UDP Port: " + options.getUdpPort());
+            System.out.println(" - gRPC Port: " + options.getGrpcPort());
+            System.out.println(" - Config Port: " + options.getConfigPort());
+            System.out.println(" - Prefix: " + options.getPrefix());
+            System.out.println(" - Password: " + options.getPassword());
+
+            System.out.println("\nConfigurações das mensagens de response:");
+            System.out.println(" - HTTP Version: " + httpResponseOptions.getVersion());
+            System.out.println(" - Include Date: " + httpResponseOptions.isIncludeDateHeader());
+            System.out.println(" - Include Server: " + httpResponseOptions.isIncludeServerHeader());
+            System.out.println(" - Server: " + httpResponseOptions.getServer());
+            System.out.println(" - Default headers: ");
+            for (var header : httpResponseOptions.getDefaultHeaders().entrySet()) {
+                var  key = header.getKey();
+                var value = header.getValue();
+
+                System.out.println("  - " + key + ": " + value);
+            }
 
             var requestHandler = new CalcRequestHandler(options, httpResponseFactory);
 
             var httpRequestOptions = getHttpRequestOptions();
             var httpRequestFactory = new HttpRequestFactory(httpRequestOptions);
+
+            System.out.println("\nConfigurações das mensagens de request:");
+            System.out.println(" - HTTP Version: " + httpRequestOptions.getVersion());
+            System.out.println(" - Include Date: " + httpRequestOptions.isIncludeDateHeader());
+            System.out.println(" - Include Server: " + httpRequestOptions.isIncludeServerHeader());
+            System.out.println(" - Server: " + httpRequestOptions.getServer());
+            System.out.println(" - Default headers: ");
+            for (var header : httpRequestOptions.getDefaultHeaders().entrySet()) {
+                var  key = header.getKey();
+                var value = header.getValue();
+
+                System.out.println("  - " + key + ": " + value);
+            }
 
             var register = new NodeRegister(options, httpRequestFactory);
 
@@ -70,6 +111,8 @@ public class Main {
               options, register, heartbeat,
               List.of(httpProtocol, udpProtocol, grpcProtocol)
             );
+
+            System.out.println("Funcionando...");
 
             node.start();
         } catch (IOException e) {

@@ -6,6 +6,7 @@ import br.ufrn.dimap.api.options.NodeOptions;
 import br.ufrn.dimap.api.protocols.IProtocol;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Node {
@@ -37,9 +38,13 @@ public class Node {
                 for (var protocol : protocols) {
                     executor.submit(protocol::start);
                 }
+
+                Thread.currentThread().join();
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

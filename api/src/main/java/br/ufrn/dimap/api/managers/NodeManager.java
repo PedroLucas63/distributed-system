@@ -53,6 +53,8 @@ public class NodeManager {
                 }
             }
 
+            System.out.println("Registrando nó: " + nodeId);
+
             var connection = new NodeConnection(nodeId, info);
             knownNodes.put(nodeId, connection);
 
@@ -147,6 +149,8 @@ public class NodeManager {
 
     public void registerConnectionRefused(long nodeId) {
         nodesLock.lock();
+
+        System.out.println("Conexão recusada do nó: " + nodeId);
 
         try {
             var connection = knownNodes.get(nodeId);

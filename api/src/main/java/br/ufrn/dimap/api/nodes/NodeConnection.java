@@ -25,10 +25,8 @@ public class NodeConnection {
         this.nodeId = nodeId;
         this.nodeInfo = nodeInfo;
 
-        var targetAddress = nodeInfo.address() + ":" + nodeInfo.grpcPort();
-
         this.channel = ManagedChannelBuilder
-            .forTarget(targetAddress)
+            .forAddress(nodeInfo.address(), nodeInfo.grpcPort())
             .usePlaintext()
             .build();
     }

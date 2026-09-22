@@ -6,6 +6,7 @@ import br.ufrn.dimap.http.sockets.HttpConnection;
 import br.ufrn.dimap.api.types.NodeInfo;
 import br.ufrn.dimap.api.types.SubscribeRequest;
 import br.ufrn.dimap.api.types.SubscribeResponse;
+import br.ufrn.dimap.http.types.HttpStatusCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -33,6 +34,13 @@ public class NodeRegister {
             connection.write(request);
 
             var response = connection.readResponse();
+
+            if (response.statusCode() != HttpStatusCode.Ok && response.statusCode() != HttpStatusCode.Accepted) {
+                throw new IllegalStateException(
+                        "Falha na comunicação com o Gateway. Status: " + response.statusCode()
+                );
+            }
+
             var subscribeResponse = MAPPER.readValue(
                     response.body(),
                     SubscribeResponse.class
@@ -56,23 +64,22 @@ public class NodeRegister {
     }
 
     private NodeInfo getNodeInfo() throws UnknownHostException {
-        {
             var hostName = InetAddress.getLocalHost().getHostName();
             var addresses = InetAddress.getAllByName(hostName);
             var address = Arrays.stream(addresses)
                     .filter(ip -> ip.getAddress().length == 4)
                     .findFirst()
-                    .orElseThrow();
+                    .orElseThrow()
+                    .getHostAddress();
 
             return new NodeInfo(
                     options.getNodeId(),
-                    address.getHostAddress(),
+                    address,
                     options.getPrefix(),
                     options.getUdpPort(),
                     options.getHttpPort(),
                     options.getGrpcPort(),
                     options.getConfigPort()
             );
-        }
     }
 }
