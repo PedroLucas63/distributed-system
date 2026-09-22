@@ -50,12 +50,12 @@ if [ "$GATEWAY_READY" = false ]; then
     exit 1
 fi
 
-echo "==> [2/3] Iniciando Node-A (Prefixo: bb, Portas: HTTP 8081, UDP 9091, gRPC 50052)..."
+echo "==> [2/3] Iniciando Node-A (Prefixo: calc, Portas: HTTP 8081, UDP 9091, gRPC 50052)..."
 (cd "$PROJECT_ROOT/node-a" && exec mvn exec:java -Dexec.mainClass="br.ufrn.dimap.Main" > "$PROJECT_ROOT/logs/node-a.log" 2>&1) &
 
 sleep 1
 
-echo "==> [3/3] Iniciando Node-B (Prefixo: master, Portas: HTTP 8082, UDP 9092, gRPC 50053)..."
+echo "==> [3/3] Iniciando Node-B (Prefixo: finance, Portas: HTTP 8082, UDP 9092, gRPC 50053)..."
 (cd "$PROJECT_ROOT/node-b" && exec mvn exec:java -Dexec.mainClass="br.ufrn.dimap.Main" > "$PROJECT_ROOT/logs/node-b.log" 2>&1) &
 
 sleep 1

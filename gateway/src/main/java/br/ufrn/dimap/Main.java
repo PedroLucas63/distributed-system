@@ -51,10 +51,10 @@ public class Main {
             );
 
             var grpcInternalBinder = new GatewayServiceBinder(options, nodeManager);
-            var grpcBbBinder = new CalcGatewayServiceBinder("calc", nodeManager);
-            var grpcMasterBinder = new FinanceGatewayServiceBinder("finance", nodeManager);
+            var grpcCalcBinder = new CalcGatewayServiceBinder("calc", nodeManager);
+            var grpcFinanceBinder = new FinanceGatewayServiceBinder("finance", nodeManager);
             var grpcProtocol =  new GrpcProtocol(
-                options, List.of(grpcInternalBinder, grpcBbBinder, grpcMasterBinder)
+                options, List.of(grpcInternalBinder, grpcCalcBinder, grpcFinanceBinder)
             );
 
             var gateway = new Gateway(List.of(httpProtocol, udpProtocol, grpcProtocol));

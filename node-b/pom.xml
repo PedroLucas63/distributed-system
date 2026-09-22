@@ -62,12 +62,6 @@
         </dependency>
         <dependency>
             <groupId>br.ufrn.dimap</groupId>
-            <artifactId>application</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>br.ufrn.dimap</groupId>
             <artifactId>api</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>

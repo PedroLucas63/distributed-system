@@ -1,7 +1,7 @@
 syntax = "proto3";
 import "google/protobuf/empty.proto";
 
-package node_a;
+package node_b;
 option java_package = "br.ufrn.dimap.grpc";
 option java_multiple_files = true;
 
