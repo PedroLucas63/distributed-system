@@ -51,6 +51,8 @@ public class NodeManager {
                         throw new IllegalArgumentException("Node already exists");
                     }
                 }
+
+                currentNode.stop();
             }
 
             System.out.println("Registrando nó: " + nodeId);

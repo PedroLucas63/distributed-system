@@ -7,6 +7,7 @@ import br.ufrn.dimap.http.types.HttpRequest;
 import br.ufrn.dimap.http.types.HttpResponse;
 import br.ufrn.dimap.api.types.NodeInfo;
 import io.grpc.Channel;
+import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Status;
 
@@ -19,7 +20,7 @@ public class NodeConnection {
 
     private long nodeId;
     private final NodeInfo nodeInfo;
-    private final Channel channel;
+    private final ManagedChannel channel;
 
     public NodeConnection(long nodeId, NodeInfo nodeInfo) {
         this.nodeId = nodeId;
@@ -80,6 +81,12 @@ public class NodeConnection {
             ) {
                 return HttpParser.parseResponse(input);
             }
+        }
+    }
+
+    public void stop() {
+        if (channel != null && !channel.isShutdown()) {
+            channel.shutdownNow();
         }
     }
 
