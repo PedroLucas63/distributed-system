@@ -29,11 +29,26 @@ public class Main {
         try {
             var options = getNodeOptions();
 
-            if (options.getConfigPort() != null) {
+            boolean isChildProcess = args.length > 0 && args[0].equals("--child");
+
+            if (options.getConfigPort() != null && !isChildProcess) {
                 var httpResponseOptions = getHttpResponseOptions();
                 var httpResponseFactory = new HttpResponseFactory(httpResponseOptions);
 
-                LifecycleManager lifecycleManager = new LifecycleManager(options, httpResponseFactory, Main::startNode);
+                String javaBin = System.getProperty("java.home") + "/bin/java";
+                String classPath = System.getProperty("java.class.path");
+                String className = Main.class.getName();
+
+                List<String> startCommand = List.of(
+                        javaBin, "-cp", classPath, className, "--child"
+                );
+
+                LifecycleManager lifecycleManager = new LifecycleManager(
+                        options,
+                        httpResponseFactory,
+                        startCommand
+                );
+
                 lifecycleManager.start();
             } else {
                 startNode(options);
@@ -98,7 +113,7 @@ public class Main {
 
             var heartbeatTimer = Duration.ofSeconds(3);
             var heartbeat = new NodeHeartbeat(
-                options, httpRequestFactory, heartbeatTimer
+                    options, httpRequestFactory, heartbeatTimer
             );
 
             var httpProtocol = new HttpNodeProtocol(options, requestHandler);
@@ -108,8 +123,8 @@ public class Main {
             var grpcProtocol = new GrpcProtocol(options, List.of(grpcBinder));
 
             var node = new Node(
-              options, register, heartbeat,
-              List.of(httpProtocol, udpProtocol, grpcProtocol)
+                    options, register, heartbeat,
+                    List.of(httpProtocol, udpProtocol, grpcProtocol)
             );
 
             System.out.println("Funcionando...");
@@ -140,20 +155,20 @@ public class Main {
         }
 
         return new NodeOptions.Builder()
-            .nodeId(nodeId)
-            .gatewayAddress(
-                InetAddress.getByName(properties.getProperty("gateway.address"))
-            )
-            .gatewayUdpPort(Integer.parseInt(properties.getProperty("gateway.udp.port")))
-            .gatewayHttpPort(Integer.parseInt(properties.getProperty("gateway.http.port")))
-            .gatewayGrpcPort(Integer.parseInt(properties.getProperty("gateway.grpc.port")))
-            .httpPort(Integer.parseInt(properties.getProperty("http.port")))
-            .udpPort(Integer.parseInt(properties.getProperty("udp.port")))
-            .grpcPort(Integer.parseInt(properties.getProperty("grpc.port")))
-            .configPort(configPort)
-            .prefix(properties.getProperty("prefix"))
-            .password(properties.getProperty("password"))
-            .build();
+                .nodeId(nodeId)
+                .gatewayAddress(
+                        InetAddress.getByName(properties.getProperty("gateway.address"))
+                )
+                .gatewayUdpPort(Integer.parseInt(properties.getProperty("gateway.udp.port")))
+                .gatewayHttpPort(Integer.parseInt(properties.getProperty("gateway.http.port")))
+                .gatewayGrpcPort(Integer.parseInt(properties.getProperty("gateway.grpc.port")))
+                .httpPort(Integer.parseInt(properties.getProperty("http.port")))
+                .udpPort(Integer.parseInt(properties.getProperty("udp.port")))
+                .grpcPort(Integer.parseInt(properties.getProperty("grpc.port")))
+                .configPort(configPort)
+                .prefix(properties.getProperty("prefix"))
+                .password(properties.getProperty("password"))
+                .build();
     }
 
     private static HttpMessageOptions getHttpResponseOptions() throws IOException {
@@ -164,11 +179,11 @@ public class Main {
         }
 
         return new HttpMessageOptions.Builder()
-            .includeDateHeader(Boolean.parseBoolean(properties.getProperty("date")))
-            .includeServerHeader(Boolean.parseBoolean(properties.getProperty("server.include")))
-            .server(properties.getProperty("server.url"))
-            .version(HttpVersion.fromValue(properties.getProperty("version")))
-            .build();
+                .includeDateHeader(Boolean.parseBoolean(properties.getProperty("date")))
+                .includeServerHeader(Boolean.parseBoolean(properties.getProperty("server.include")))
+                .server(properties.getProperty("server.url"))
+                .version(HttpVersion.fromValue(properties.getProperty("version")))
+                .build();
     }
 
     private static HttpMessageOptions getHttpRequestOptions() throws IOException {
@@ -179,16 +194,16 @@ public class Main {
         }
 
         var headers = properties.stringPropertyNames()
-            .stream()
-            .filter(name -> name.startsWith("header."))
-            .collect(Collectors.toMap(
-                name -> name.substring("header.".length()), properties::getProperty
-            ));
+                .stream()
+                .filter(name -> name.startsWith("header."))
+                .collect(Collectors.toMap(
+                        name -> name.substring("header.".length()), properties::getProperty
+                ));
 
         return new HttpMessageOptions.Builder()
-            .includeDateHeader(Boolean.parseBoolean(properties.getProperty("date")))
-            .version(HttpVersion.fromValue(properties.getProperty("version")))
-            .defaultHeaders(headers)
-            .build();
+                .includeDateHeader(Boolean.parseBoolean(properties.getProperty("date")))
+                .version(HttpVersion.fromValue(properties.getProperty("version")))
+                .defaultHeaders(headers)
+                .build();
     }
 }

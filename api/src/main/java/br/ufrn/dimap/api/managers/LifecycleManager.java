@@ -12,24 +12,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.function.Consumer;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class LifecycleManager {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private final NodeOptions options;
     private final HttpResponseFactory responseFactory;
-    private final Consumer<NodeOptions> nodeStarter;
+    private final List<String> startCommand;
 
-    private volatile Thread nodeThread;
+    private volatile Process nodeProcess;
 
     public LifecycleManager(
-        NodeOptions options,
-        HttpResponseFactory responseFactory,
-        Consumer<NodeOptions> nodeStarter
+            NodeOptions options,
+            HttpResponseFactory responseFactory,
+            List<String> startCommand
     ) {
         this.options = options;
-        this.nodeStarter = nodeStarter;
+        this.startCommand = startCommand;
         this.responseFactory = responseFactory;
     }
 
@@ -37,11 +38,11 @@ public class LifecycleManager {
         startNode();
 
         try (var listener = new HttpListener(
-            InetAddress.getByName("0.0.0.0"),
-            options.getConfigPort()
+                InetAddress.getByName("0.0.0.0"),
+                options.getConfigPort()
         )) {
             System.out.println(
-                "[LIFECYCLE] Configuration server listening on port " + options.getConfigPort()
+                    "[LIFECYCLE] Configuration server listening on port " + options.getConfigPort()
             );
 
             while (!Thread.currentThread().isInterrupted()) {
@@ -50,7 +51,7 @@ public class LifecycleManager {
             }
         } catch (Exception e) {
             System.out.println(
-                "[LIFECYCLE] Error: " + e.getMessage()
+                    "[LIFECYCLE] Error: " + e.getMessage()
             );
         }
     }
@@ -98,7 +99,7 @@ public class LifecycleManager {
                 case "STOP" -> stopNode();
                 default -> {
                     return responseFactory.badRequest(
-                        "Unknown command"
+                            "Unknown command"
                     );
                 }
             }
@@ -115,15 +116,17 @@ public class LifecycleManager {
             return;
         }
 
-        nodeThread = Thread.startVirtualThread(() -> {
-            try {
-                nodeStarter.accept(options);
-            } catch (Exception e) {
-                System.out.println(
-                    "[LIFECYCLE] Node stopped: " + e.getMessage()
-                );
-            }
-        });
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(startCommand);
+
+            processBuilder.inheritIO();
+
+            nodeProcess = processBuilder.start();
+            System.out.println("[LIFECYCLE] Node started with PID: " + nodeProcess.pid());
+
+        } catch (IOException e) {
+            System.out.println("[LIFECYCLE] Failed to start node: " + e.getMessage());
+        }
     }
 
     private synchronized void stopNode() {
@@ -133,13 +136,24 @@ public class LifecycleManager {
 
         System.out.println("[LIFECYCLE] Stopping node " + options.getPrefix() + "...");
 
-        nodeThread.interrupt();
-        nodeThread = null;
+        nodeProcess.destroy();
+
+        try {
+            if (!nodeProcess.waitFor(3, TimeUnit.SECONDS)) {
+                System.out.println("[LIFECYCLE] Node didn't stop cleanly. Forcing termination...");
+                nodeProcess.destroyForcibly();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            nodeProcess.destroyForcibly();
+        }
+
+        nodeProcess = null;
 
         System.out.println("[LIFECYCLE] Node " + options.getPrefix() + " stopped.");
     }
 
     private boolean isNodeRunning() {
-        return nodeThread != null && nodeThread.isAlive();
+        return nodeProcess != null && nodeProcess.isAlive();
     }
 }

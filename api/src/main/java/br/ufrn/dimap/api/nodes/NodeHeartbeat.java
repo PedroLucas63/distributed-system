@@ -40,7 +40,7 @@ public class NodeHeartbeat {
     }
 
     private void sendPulse() throws IOException {
-        try (var connection = new DatagramSocket()) {
+            try (var connection = new DatagramSocket()) {
             connection.connect(options.getGatewayAddress(), options.getGatewayUdpPort());
 
             var message = new HeartbeatMessage(options.getNodeId(), options.getPassword());

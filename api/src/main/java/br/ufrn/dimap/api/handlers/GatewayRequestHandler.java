@@ -56,7 +56,7 @@ public class GatewayRequestHandler implements IRequestHandler {
                     return processHeartbeat(request);
                 }
                 case "/live-nodes" -> {
-                    return processLiveNodes(request);
+                        return processLiveNodes(request);
                 }
                 case "/command" -> {
                     return processNodeCommand(request);
